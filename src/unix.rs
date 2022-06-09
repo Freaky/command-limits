@@ -11,18 +11,11 @@ const ARG_RESERVED: usize = 4096;
 const ARG_MIN: usize = 2048;
 
 // _SC_ARG_MAX can be anything up to LONG_MAX, but let's not go too mad
-// Linux helpfully returns values too large to use, so follow GNU and set this
-// to 128k.
-#[cfg(target_os = "linux")]
-const ARG_MAX: usize = 128 * 1024;
+const ARG_MAX: usize = 2048 * 1024;
 
-// This also happens to be the longest value the kernel will accept for a single
-// argument or env variable.
+// Linux limits individual argument strlen to 128k
 #[cfg(target_os = "linux")]
 const ARG_SINGLE_MAX: usize = 128 * 1024;
-
-#[cfg(not(target_os = "linux"))]
-const ARG_MAX: usize = 2048 * 1024;
 
 #[cfg(not(target_os = "linux"))]
 const ARG_SINGLE_MAX: usize = 0;
