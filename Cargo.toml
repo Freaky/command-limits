@@ -1,0 +1,13 @@
+[package]
+name = "command-limits"
+description = "Build command lines that respect argument size limits"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/Freaky/command-limits"
+keywords = ["command", "argument", "limits", "xargs"]
+categories = ["os"]
+readme = "README.md"
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2.126"
