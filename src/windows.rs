@@ -1,6 +1,6 @@
-use std::os::windows::ffi::OsStrExt;
 use std::ffi::OsStr;
 use std::num::NonZeroUsize;
+use std::os::windows::ffi::OsStrExt;
 
 // Reserve a little, just in case.
 const ARG_RESERVED: usize = 4096;

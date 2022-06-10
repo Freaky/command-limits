@@ -1,7 +1,7 @@
+use std::collections::BTreeMap;
 use std::ffi::OsString;
 use std::num::NonZeroUsize;
 use std::process::Command;
-use std::collections::BTreeMap;
 use std::{env, ffi::OsStr};
 
 #[cfg_attr(unix, path = "unix.rs")]
@@ -130,7 +130,7 @@ impl CommandBuilder {
     /// If the environment would be too large to fit, it returns `Err`.
     pub fn inherit_env(&mut self) -> Result<&mut Self> {
         let old_env_size = self.env_size;
-        self.env_size = env::vars_os().map(|(k,v)| env_pair_len(&k, &v)).sum();
+        self.env_size = env::vars_os().map(|(k, v)| env_pair_len(&k, &v)).sum();
 
         if let Err(e) = self.check_env_size(0) {
             self.env_size = old_env_size;
@@ -190,7 +190,8 @@ impl CommandBuilder {
             .individual_env_size
             .or(self.limits.env_size)
             .unwrap_or(self.limits.arg_size)
-            .get() < len
+            .get()
+            < len
         {
             return Err(Error::TooLarge);
         }
@@ -218,7 +219,8 @@ impl CommandBuilder {
             .limits
             .individual_arg_size
             .unwrap_or(self.limits.arg_size)
-            .get() < len
+            .get()
+            < len
         {
             return Err(Error::TooLarge);
         }
@@ -265,7 +267,8 @@ impl CommandBuilder {
             .iter()
             .map(|arg| self.check_arg(arg.as_ref()))
             .sum::<Result<usize>>()?;
-        self.argv.extend(args.iter().map(|arg| arg.as_ref().to_owned()));
+        self.argv
+            .extend(args.iter().map(|arg| arg.as_ref().to_owned()));
         Ok(self)
     }
 
@@ -275,8 +278,7 @@ impl CommandBuilder {
         K: AsRef<OsStr>,
         V: AsRef<OsStr>,
     {
-        if let Some(old_value) = self.env.get(key.as_ref())
-        {
+        if let Some(old_value) = self.env.get(key.as_ref()) {
             // If it was previously set in the command, do we have space to exchange
             // the old value for the new one?
             if let Some(old_value) = old_value {
@@ -303,7 +305,8 @@ impl CommandBuilder {
             self.env_size += self.check_env_pair(key.as_ref(), value.as_ref())?;
         }
 
-        self.env.insert(key.as_ref().to_owned(), Some(value.as_ref().to_owned()));
+        self.env
+            .insert(key.as_ref().to_owned(), Some(value.as_ref().to_owned()));
 
         Ok(self)
     }
@@ -315,17 +318,20 @@ impl CommandBuilder {
     where
         K: AsRef<OsStr>,
     {
-        if let Some(value) = self.env.get(key.as_ref())
-        {
+        if let Some(value) = self.env.get(key.as_ref()) {
             if let Some(value) = value {
-                self.env_size = self.env_size.saturating_sub(env_pair_len(key.as_ref(), value));
+                self.env_size = self
+                    .env_size
+                    .saturating_sub(env_pair_len(key.as_ref(), value));
             } else {
                 // If it's already been set to None, do nothing instead of reinserting
                 return self;
             }
         } else if !self.clear_env {
             if let Some(value) = env::var_os(key.as_ref()) {
-                self.env_size = self.env_size.saturating_sub(env_pair_len(key.as_ref(), &value));
+                self.env_size = self
+                    .env_size
+                    .saturating_sub(env_pair_len(key.as_ref(), &value));
             }
         }
 

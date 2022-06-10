@@ -1,4 +1,3 @@
-
 use std::fmt;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
@@ -18,11 +17,15 @@ pub enum Error {
 
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", match *self {
-            Error::TooMany => "too many values",
-            Error::TooLarge => "value is too large",
-            Error::InsufficientSpace => "insufficient space for value",
-        })
+        write!(
+            f,
+            "{}",
+            match *self {
+                Error::TooMany => "too many values",
+                Error::TooLarge => "value is too large",
+                Error::InsufficientSpace => "insufficient space for value",
+            }
+        )
     }
 }
 
