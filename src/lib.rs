@@ -90,6 +90,21 @@ impl CommandBuilder {
         Ok(cmd)
     }
 
+    /// Return the limits set for this `CommandBuilder`
+    pub fn limits(&self) -> CommandLimits {
+        self.limits
+    }
+
+    /// Return the current space used by arguments
+    pub fn arg_size(&self) -> usize {
+        self.arg_size
+    }
+
+    /// Return the current space used by the environment
+    pub fn env_size(&self) -> usize {
+        self.env_size
+    }
+
     /// Create a new `CommandBuilder` with specified limits and capturing the environment.
     pub fn capture_with_limits<S>(command: S, limits: CommandLimits) -> Result<Self>
     where
