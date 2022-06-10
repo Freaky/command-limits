@@ -64,7 +64,7 @@ impl CommandBuilder {
     pub fn into_command(&self) -> std::process::Command;
 }
 
-impl From<&CommandBuilder> for Command;
+impl From<&CommandBuilder> for std::process::Command;
 ```
 
 ## Description
@@ -90,7 +90,7 @@ cmd.into_command().spawn()?;
 ```
 
 By executing `arg()` or `args()` until `Error::TooMany` or `Error::InsufficientSpace`
-is returned, an application can execute as long of command as should be reasonably
+is returned, an application can execute as long of a command as should be reasonably
 expected to fit in the current environment.
 
 `Error::TooLarge` indicates the argument or environment variable exceeds maximal limits
