@@ -236,6 +236,18 @@ fn run() -> Result<i32, Box<dyn std::error::Error>> {
             }
             let res = cmd.into_command().status()?;
             if !res.success() {
+                #[cfg(unix)]
+                {
+                    use std::os::unix::process::ExitStatusExt;
+                    if let Some(signal) = res.signal() {
+                        eprintln!(
+                            "{}: terminated with signal {}; aborting",
+                            cmd.get_program().to_string_lossy(),
+                            signal
+                        );
+                        return Ok(0);
+                    }
+                }
                 rc = res.code().unwrap_or(1);
                 if rc == 255 {
                     eprintln!(
