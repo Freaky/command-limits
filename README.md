@@ -62,6 +62,11 @@ impl CommandBuilder {
     pub fn capture_env(&mut self) -> Result<&mut Self>;
     pub fn env_clear(&mut self) -> &mut Self;
     pub fn into_command(&self) -> std::process::Command;
+    pub fn get_program(&self) -> &OsStr;
+    pub fn get_args(&self) -> &[OsString];
+    pub fn get_limits(&self) -> CommandLimits;
+    pub fn arg_size(&self) -> usize;
+    pub fn env_size(&self) -> usize;
 }
 
 impl From<&CommandBuilder> for std::process::Command;
