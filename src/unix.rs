@@ -1,8 +1,8 @@
-use libc::{c_char, sysconf, _SC_ARG_MAX};
+use libc::{sysconf, _SC_ARG_MAX};
 
+use std::ffi::OsStr;
 use std::num::NonZeroUsize;
 use std::os::unix::ffi::OsStrExt;
-use std::{ffi::OsStr, mem};
 
 // POSIX guarantees at least 4k of space, but wants us to reserve at least 2k
 // BSD prefers 4k, but if we were already at the floor go with POSIX
@@ -20,6 +20,10 @@ const ARG_SINGLE_MAX: usize = 128 * 1024;
 #[cfg(not(target_os = "linux"))]
 const ARG_SINGLE_MAX: usize = 0;
 
+// Assume 8 bytes, since 32-bit binaries may run on 64-bit operating systems,
+// and thus inherit those limits.
+const MAX_POINTER_SIZE: usize = 8;
+
 fn _sc_arg_max() -> Option<usize> {
     let arg_max = unsafe { sysconf(_SC_ARG_MAX) };
 
@@ -36,7 +40,7 @@ pub(crate) fn osstr_len<S: AsRef<OsStr>>(s: S) -> usize {
 
 pub(crate) fn arg_len<S: AsRef<OsStr>>(arg: S) -> usize {
     // char * {arg}\0
-    mem::size_of::<*const c_char>() + osstr_len(arg) + 1
+    MAX_POINTER_SIZE + osstr_len(arg) + 1
 }
 
 pub(crate) fn env_pair_len(k: &OsStr, v: &OsStr) -> usize {
@@ -45,7 +49,7 @@ pub(crate) fn env_pair_len(k: &OsStr, v: &OsStr) -> usize {
 
 pub(crate) fn env_key_len(k: &OsStr) -> usize {
     // char * {k}=
-    mem::size_of::<*const c_char>() + osstr_len(k) + 1
+    MAX_POINTER_SIZE + osstr_len(k) + 1
 }
 
 pub(crate) fn env_val_len(v: &OsStr) -> usize {
