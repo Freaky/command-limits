@@ -241,7 +241,7 @@ fn run() -> Result<i32, Box<dyn std::error::Error>> {
                     use std::os::unix::process::ExitStatusExt;
                     if let Some(signal) = res.signal() {
                         eprintln!(
-                            "{}: terminated with signal {}; aborting",
+                            "xargs: {}: terminated with signal {}; aborting",
                             cmd.get_program().to_string_lossy(),
                             signal
                         );
@@ -251,7 +251,7 @@ fn run() -> Result<i32, Box<dyn std::error::Error>> {
                 rc = res.code().unwrap_or(1);
                 if rc == 255 {
                     eprintln!(
-                        "{}: exited with status 255; aborting",
+                        "xargs: {}: exited with status 255; aborting",
                         cmd.get_program().to_string_lossy()
                     );
                     return Ok(rc);
